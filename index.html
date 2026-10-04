@@ -20,7 +20,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8}
  <div class="brand"><b>D</b> DIGDAYA<small>TRACK CALCULATOR</small></div>
  <div><button class="dgbtn ghost" onclick="showDG('dashboard')">Dashboard</button>
  <button class="dgbtn ghost" onclick="showDG('pricing')">Plans</button>
- <button class="dgbtn primary" onclick="openAuth('login')">Login / Account</button></div>
+ <button class="dgbtn primary" id="topLoginBtn">Login / Account</button></div>
 </div>
 
 <section id="dg-home" class="hero">
@@ -153,6 +153,10 @@ function renderDGAccount(){
  if(!u){box.innerHTML='<h2>Account</h2><p>Belum login.</p><button class="dgbtn primary" onclick="openAuth(\\'register\\')">CREATE ACCOUNT</button> <button class="dgbtn ghost" onclick="openAuth(\\'login\\')">LOG IN</button>';return}
  box.innerHTML='<div class="dg-userbox"><h2>'+u.name+'</h2><div>'+u.email+'</div><div>'+(u.team||'Independent Coach')+' • '+(u.country||'-')+'</div><br><span class="dg-planbadge">PLAN: '+u.plan+'</span></div><button class="dgbtn primary" onclick="showDG(\\'pricing\\')">UPGRADE PLAN</button> <button class="dgbtn ghost" onclick="logoutDG()">LOG OUT</button>';
 }
-document.addEventListener('DOMContentLoaded',renderDGAccount);
+document.addEventListener('DOMContentLoaded',()=>{
+  renderDGAccount();
+  const b=document.getElementById('topLoginBtn');
+  if(b) b.addEventListener('click',()=>openAuth('login'));
+});
 </script>
 </body></html>

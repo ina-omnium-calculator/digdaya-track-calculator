@@ -1,15 +1,10 @@
-# DIGDAYA TRACK CALCULATOR — Commercial V2 Prototype
+# DIGDAYA TRACK CALCULATOR — Commercial V2.1 Login Fix
 
-Added:
-- Create Account / Login prototype
-- FREE account status
-- Account page and Upgrade flow
-- Existing Omnium module
-- Team Pursuit preview
-- Pricing: Free / Coach Pro / Team Pro
-- Responsive/PWA shell
+Fix:
+- Login / Account button now works
+- Create Account button now works
+- Upgrade and Logout handlers simplified
+- No real payment is processed
+- Demo account remains local to the device
 
-SECURITY: demo account data is localStorage-only and is NOT production authentication.
-Do not collect real payments or real passwords with this prototype.
-
-Production phase requires server-side auth/database, secure password handling, payment gateway webhooks, subscription entitlements, privacy policy and terms.
+Upload/replace index.html on GitHub. Other files can remain unchanged.
