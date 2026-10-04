@@ -1,13 +1,15 @@
-# DIGDAYA TRACK CALCULATOR — Commercial V1 Demo
-Demo only. No real payment is processed.
+# DIGDAYA TRACK CALCULATOR — Commercial V2 Prototype
 
-Modules:
-- Landing & pricing
-- Demo login/account
-- Dashboard
-- Existing Omnium calculator
-- Team Pursuit module preview
-- PWA shell
+Added:
+- Create Account / Login prototype
+- FREE account status
+- Account page and Upgrade flow
+- Existing Omnium module
+- Team Pursuit preview
+- Pricing: Free / Coach Pro / Team Pro
+- Responsive/PWA shell
 
-Production next step:
-server-side authentication, database, payment gateway, subscription webhooks/entitlements, privacy/terms, production hosting/domain.
+SECURITY: demo account data is localStorage-only and is NOT production authentication.
+Do not collect real payments or real passwords with this prototype.
+
+Production phase requires server-side auth/database, secure password handling, payment gateway webhooks, subscription entitlements, privacy policy and terms.

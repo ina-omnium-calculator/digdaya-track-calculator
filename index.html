@@ -20,7 +20,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8}
  <div class="brand"><b>D</b> DIGDAYA<small>TRACK CALCULATOR</small></div>
  <div><button class="dgbtn ghost" onclick="showDG('dashboard')">Dashboard</button>
  <button class="dgbtn ghost" onclick="showDG('pricing')">Plans</button>
- <button class="dgbtn primary" onclick="showDG('account')">Login / Account</button></div>
+ <button class="dgbtn primary" onclick="openAuth('login')">Login / Account</button></div>
 </div>
 
 <section id="dg-home" class="hero">
@@ -36,7 +36,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8}
 <div class="card" style="border:2px solid #e31b23"><h3>COACH PRO</h3><h2>Rp79.000<small>/bulan</small></h2><p>Full calculators, save race, history, PDF/Excel, offline.</p><button class="dgbtn primary" onclick="demoCheckout('Coach Pro')">Berlangganan</button></div>
 <div class="card"><h3>TEAM PRO</h3><h2>Rp249.000<small>/bulan</small></h2><p>Multi-user, shared race, team dashboard dan branding.</p><button class="dgbtn primary" onclick="demoCheckout('Team Pro')">Berlangganan</button></div>
 </div></section>
-<section id="dg-account" class="section hide"><div class="card"><h2>Login / Register</h2><p>Prototype akun. Pada versi produksi akan terhubung ke database dan subscription.</p><input placeholder="Email" style="padding:12px;width:min(420px,90%)"><br><br><input type="password" placeholder="Password" style="padding:12px;width:min(420px,90%)"><br><br><button class="dgbtn primary" onclick="alert('Demo login — backend belum diaktifkan.')">Masuk</button></div></section>
+<section id="dg-account" class="section hide"><div class="card" id="dgAccountContent"></div></section>
 <section id="dg-dashboard" class="section hide"><h2>Dashboard</h2><div class="cards">
 <div class="card"><h3>Omnium</h3><p>Scratch • Tempo • Elimination • Points</p><button class="dgbtn primary" onclick="openCalculator()">Buka Calculator</button></div>
 <div class="card"><h3>Team Pursuit</h3><p>Lap time • Avg speed • Avg RPM • Rider 1–4</p><button class="dgbtn primary" onclick="showDG('pursuit')">Buka Pursuit</button></div>
@@ -49,7 +49,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8}
 <script>
 function hideDG(){['home','pricing','account','dashboard','pursuit'].forEach(x=>{let e=document.getElementById('dg-'+x);if(e)e.classList.add('hide')})}
 function showDG(x){hideDG();let e=document.getElementById('dg-'+x);if(e)e.classList.remove('hide'); window.scrollTo(0,0)}
-function demoCheckout(p){alert(p+' dipilih. Ini Commercial Demo; belum ada transaksi uang. Payment gateway + subscription backend akan dipasang pada versi produksi.')}
+function demoCheckout(p){alert(p+' dipilih. Commercial V2 prototype: checkout belum memproses uang. Pada versi produksi, pembayaran sukses akan mengubah akun FREE menjadi PRO secara otomatis.')}
 function openCalculator(){hideDG();let c=document.getElementById('legacyCalc');if(c)c.classList.remove('hide')}
 </script>
 <div id="legacyCalc" class="hide"><div class='wrap'>
@@ -97,4 +97,62 @@ function exportPDF(){let was=document.body.classList.contains('trackside');docum
 function renderAll(){renderSetup();document.getElementById('scratchTable').innerHTML=simpleRankTable('Scratch','scratchPos');renderTempo();renderElimination();renderPoints();renderOverall()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.panel').forEach(x=>x.classList.add('hidden'));document.getElementById(b.dataset.tab).classList.remove('hidden')});
 if(!S.riders.length)for(let i=0;i<8;i++)S.riders.push(baseRider());renderAll();
-</script></div></body></html>
+</script></div>
+<style>
+.dg-modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:5000;padding:18px}
+.dg-modal.open{display:flex}.dg-auth{width:min(460px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 25px 80px #0008}
+.dg-auth h2{margin-top:0}.dg-field{width:100%;box-sizing:border-box;padding:12px;margin:6px 0 12px;border:1px solid #ccd2da;border-radius:9px}
+.dg-planbadge{display:inline-block;padding:5px 10px;border-radius:999px;background:#eef1f5;font-weight:800;font-size:12px}
+.dg-userbox{background:#151920;color:#fff;border-radius:14px;padding:16px;margin-bottom:14px}
+</style>
+
+<div id="authModal" class="dg-modal">
+ <div class="dg-auth">
+  <button onclick="closeAuth()" style="float:right;border:0;background:none;font-size:22px">×</button>
+  <div class="brand" style="color:#111"><b>D</b> DIGDAYA<small>TRACK CALCULATOR</small></div>
+  <div id="loginPane">
+   <h2>Log In</h2>
+   <input id="loginEmail" class="dg-field" type="email" placeholder="Email">
+   <input id="loginPass" class="dg-field" type="password" placeholder="Password">
+   <button class="dgbtn primary" style="width:100%" onclick="demoLogin()">LOG IN</button>
+   <p>Belum punya akun? <a href="#" onclick="switchAuth('register')">Create Account</a></p>
+  </div>
+  <div id="registerPane" class="hide">
+   <h2>Create Account</h2>
+   <input id="regName" class="dg-field" placeholder="Nama">
+   <input id="regEmail" class="dg-field" type="email" placeholder="Email">
+   <input id="regTeam" class="dg-field" placeholder="Team / Club (opsional)">
+   <input id="regCountry" class="dg-field" placeholder="Negara">
+   <input id="regPass" class="dg-field" type="password" placeholder="Password">
+   <button class="dgbtn primary" style="width:100%" onclick="demoRegister()">CREATE FREE ACCOUNT</button>
+   <p>Sudah punya akun? <a href="#" onclick="switchAuth('login')">Log In</a></p>
+  </div>
+  <small style="color:#777">Commercial V2 prototype: akun demo tersimpan hanya di perangkat ini. Jangan gunakan password asli.</small>
+ </div>
+</div>
+
+<script>
+const DGKEY='digdaya_demo_account_v2';
+function getDGUser(){try{return JSON.parse(localStorage.getItem(DGKEY)||'null')}catch(e){return null}}
+function openAuth(mode='login'){document.getElementById('authModal').classList.add('open');switchAuth(mode)}
+function closeAuth(){document.getElementById('authModal').classList.remove('open')}
+function switchAuth(mode){document.getElementById('loginPane').classList.toggle('hide',mode!=='login');document.getElementById('registerPane').classList.toggle('hide',mode!=='register')}
+function demoRegister(){
+ const u={name:regName.value.trim(),email:regEmail.value.trim(),team:regTeam.value.trim(),country:regCountry.value.trim(),plan:'FREE'};
+ if(!u.name||!u.email||!regPass.value){alert('Nama, email dan password wajib diisi.');return}
+ localStorage.setItem(DGKEY,JSON.stringify(u)); closeAuth(); renderDGAccount(); showDG('account');
+}
+function demoLogin(){
+ const u=getDGUser(); if(!u){alert('Belum ada akun demo di perangkat ini. Pilih Create Account.');return}
+ if(loginEmail.value.trim().toLowerCase()!==u.email.toLowerCase()){alert('Email tidak cocok dengan akun demo pada perangkat ini.');return}
+ closeAuth(); renderDGAccount(); showDG('account');
+}
+function logoutDG(){localStorage.removeItem(DGKEY);renderDGAccount();showDG('home')}
+function renderDGAccount(){
+ const u=getDGUser(), box=document.getElementById('dgAccountContent'); if(!box)return;
+ if(!u){box.innerHTML='<h2>Account</h2><p>Belum login.</p><button class="dgbtn primary" onclick="openAuth(\\'register\\')">CREATE ACCOUNT</button> <button class="dgbtn ghost" onclick="openAuth(\\'login\\')">LOG IN</button>';return}
+ box.innerHTML='<div class="dg-userbox"><h2>'+u.name+'</h2><div>'+u.email+'</div><div>'+(u.team||'Independent Coach')+' • '+(u.country||'-')+'</div><br><span class="dg-planbadge">PLAN: '+u.plan+'</span></div><button class="dgbtn primary" onclick="showDG(\\'pricing\\')">UPGRADE PLAN</button> <button class="dgbtn ghost" onclick="logoutDG()">LOG OUT</button>';
+}
+document.addEventListener('DOMContentLoaded',renderDGAccount);
+</script>
+</body></html>
